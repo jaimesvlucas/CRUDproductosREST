@@ -20,6 +20,15 @@
         </style>
     </head>
     <body>
+        <%
+            HttpSession sesion = request.getSession();
+            String usuarioLogeado = ( String ) sesion.getAttribute("usuarioLogeado");
+            if ( usuarioLogeado == null ) {
+                String mensaje = "Debe logearse";
+                request.setAttribute("mensaje", mensaje);
+                request.getRequestDispatcher("login.jsp").forward(request, response);
+            } 
+        %>
   <nav class="navbar navbar-expand-md bg-dark navbar-dark">
   <!-- Brand -->
   <a class="navbar-brand" href="#">Restaurante Bosco</a>
@@ -33,7 +42,7 @@
   <div class="collapse navbar-collapse" id="collapsibleNavbar">
     <ul class="navbar-nav">
       <li class="nav-item active">
-        <a class="nav-link" href="ServletProductos?op=listar">Listar productos</a>
+        <a class="nav-link" href="ServletProductos?op=listar&pagina=1">Listar productos</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="ServletProductos?op=insert1"">Nuevo Producto</a>
@@ -41,12 +50,18 @@
       <li class="nav-item">
         <a class="nav-link" href="#">TPV</a>
       </li>
+        <li class="nav-item">
+            <a class="nav-link" href="login.jsp">Login</a>
+          </li>
     </ul>
   </div>
+  <div class="text-white"><%=usuarioLogeado%></div>
 </nav>
         <div  id="lista">
         <h1>Listado de productos</h1>
         <% List<Productos> misProductos = (List<Productos>) request.getAttribute("misProductos");
+        int num_paginas = (int) request.getAttribute("num_paginas");
+        int pagina = (int) request.getAttribute("pagina");
         %>
         <table class="table table-hover">
             <tr><th>id</th><th>Nombre</th><td>Imagen</td><td>Categoría</td><td>Precio</td><td>Borrar</td><td>Actualizar</td></tr>
@@ -62,6 +77,17 @@
             
             <% } %>
         </table>
+            <p class="text-center"> Mostrando página ${pagina} de ${num_paginas}</p>
+            <p class="text-center">
+                <% for(int i=1;i<=num_paginas;i++){
+                    if(pagina==i){
+                        String cadena = "";
+                %>
+                <span><%=i%></span>
+                <%}else{%>
+                <a href="ServletProductos?op=listar&pagina=<%=i%>"><%=i%></a>
+            <%}}%>
+            </p>
         </div>
         <script>
             function Confirmation(){

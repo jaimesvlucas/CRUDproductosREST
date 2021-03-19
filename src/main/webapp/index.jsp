@@ -9,6 +9,16 @@
         <title>JSP Page</title>
     </head>
     <body>
+         <%
+            HttpSession sesion = request.getSession();
+            String usuarioLogeado = ( String ) sesion.getAttribute("usuarioLogeado");
+            if ( usuarioLogeado == null ) {
+                String mensaje = "Debe logearse";
+                request.setAttribute("mensaje", mensaje);
+                request.getRequestDispatcher("login.jsp").forward(request, response);
+            } 
+            String mensaje = ( String ) request.getAttribute("mensaje");
+    %>
         <nav class="navbar navbar-expand-md bg-dark navbar-dark">
   <!-- Brand -->
   <a class="navbar-brand" href="#">Restaurante Bosco</a>
@@ -22,7 +32,7 @@
   <div class="collapse navbar-collapse" id="collapsibleNavbar">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" href="ServletProductos?op=listar">Listar productos</a>
+        <a class="nav-link" href="ServletProductos?op=listar&pagina=1">Listar productos</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="ServletProductos?op=insert1"">Nuevo Producto</a>
@@ -30,10 +40,16 @@
       <li class="nav-item">
         <a class="nav-link" href="#">TPV</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="login.jsp">Login</a>
+      </li>
     </ul>
   </div>
+  <div class="text-white"><%=usuarioLogeado%> | <a class="btn btn-danger" href="ServletLogin">Salir</a></div>
 </nav>
+   
         <h1>Gestión de Productos</h1>
+        <p><%=mensaje%></p>
         <p><a href="ServletProductos?op=listar">Listar</a></p>
         <p><a href="ServletProductos?op=insert1">Insert</a></p>
         

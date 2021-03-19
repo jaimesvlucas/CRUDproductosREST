@@ -5,6 +5,7 @@
  */
 package controlador;
 
+import java.util.List;
 import javax.json.Json;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
@@ -12,7 +13,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
@@ -73,19 +76,42 @@ public class RestProductos {
     @GET
     @Path("/producto/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductoJson(@PathParam("id") int id) {
+    public Productos getProductoJson(@PathParam("id") int id) {
         Productos miProducto = ProductosCRUD.getProducto(id);
-        JsonBuilderFactory factory = Json.createBuilderFactory(null);
-        JsonObject persona = factory.createObjectBuilder()
-        .add("id", miProducto.getId())
-        .add("nombre", miProducto.getNombre())
-        .add("imagen", miProducto.getImagen())
-        .add("categoria", miProducto.getCategoria())
-        .add("precio", miProducto.getPrecio())
-      .build(); 
-      ResponseBuilder res = Response.ok(persona.toString());   
-        return res.build();
+        return miProducto;
     }
+    
+    @GET
+    @Path("/productos/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Productos> getProductos() {
+        List<Productos> miProducto = ProductosCRUD.getProductos();
+        return miProducto;
+    }
+    
+    @PUT
+    @Path("/producto/")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Productos updateProductos(Productos p) {
+        ProductosCRUD.actualizaProducto(p);
+        return p;
+    }
+    
+    @POST
+    @Path("/producto/")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void setProducto(Productos p) {
+        ProductosCRUD.insertaProducto(p);
+    }
+    
+    @DELETE
+    @Path("/producto/{id}")
+    public void deleteProducto(@PathParam("id") int id) {
+        ProductosCRUD.destroyProducto(id);
+    }
+    
     
     /*@GET
     public Response ping(){

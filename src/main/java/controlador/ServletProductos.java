@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class ServletProductos extends HttpServlet {
     private int id;
-
+    private final int NUM_LINEAS_PAGINAS = 4;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -42,15 +42,21 @@ public class ServletProductos extends HttpServlet {
             out.println("<title>Servlet ServletProductos</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ServletProductos at " + request.getContextPath() + "</h1>");
             if ( op.equals("listar")){
                 List<Productos> misProductos = ProductosCRUD.getProductos();
+                int pagina = 1;
+                int offset = 0;
+                if(request.getParameter("pagina")!=null){
+                    pagina = Integer.parseInt(request.getParameter("pagina"));
+                    offset = (pagina-1)*NUM_LINEAS_PAGINAS;
+                }
+                int num_paginas = (int) Math.ceil(misProductos.size())/ NUM_LINEAS_PAGINAS;
+                misProductos = ProductosCRUD.getProductosPaginado(offset, NUM_LINEAS_PAGINAS);
+                request.setAttribute("num_paginas", num_paginas);
+                request.setAttribute("pagina", pagina);
                 request.setAttribute("misProductos", misProductos);
                 request.getRequestDispatcher("listar.jsp").forward(request, response);
                 
-//                for (Productos p: misProductos ){
-//                    out.println(p.getNombre() );
-//                }
             }
             if ( op.equals("insert1")) { //cuando le indicamos que vaya a insertar
                  request.getRequestDispatcher("insert.jsp").forward(request, response);
